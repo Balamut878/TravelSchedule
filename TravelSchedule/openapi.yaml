@@ -1,0 +1,462 @@
+openapi: 3.0.3
+info:
+  title: API.Rasp.Yandex.Net
+  description: API Яндекс.Расписаний
+  version: 3.0.0
+servers:
+- url: https://api.rasp.yandex.net
+tags:
+- name: Список ближайших станций
+  description: Список ближайших станций
+- name: Расписание рейсов по станции
+  description: Расписание рейсов по заданной станции
+- name: Список станций следования
+  description: Промежуточные станции нитки
+- name: Расписание рейсов между станциями
+  description: Расписание рейсов между двумя станциями
+- name: Ближайший город
+  description: Ближайший населённый пункт
+- name: Информация о перевозчике
+  description: Информация о перевозчике по коду
+- name: Список всех доступных станций
+  description: Полный список станций, сгруппированных по странам и регионам
+paths:
+  /v3.0/nearest_stations/:
+    get:
+      tags:
+      - getNearestStations
+      summary: Список ближайших станций
+      operationId: getNearestStations
+      parameters:
+      - name: apikey
+        in: query
+        description: API key
+        required: true
+        schema:
+          type: string
+      - name: lat
+        in: query
+        description: широта
+        required: true
+        schema:
+          type: number
+      - name: lng
+        in: query
+        description: долгота
+        required: true
+        schema:
+          type: number
+      - name: distance
+        in: query
+        description: радиус охвата
+        required: true
+        schema:
+          type: integer
+      - name: format
+        in: query
+        description: json или xml
+        required: false
+        schema:
+          type: string
+      - name: lang
+        in: query
+        description: lang
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stations'
+  /v3.0/nearest_settlement/:
+    get:
+      tags:
+      - Ближайший город
+      summary: Ближайший город
+      operationId: getNearestSettlement
+      parameters:
+      - name: apikey
+        in: query
+        description: API key
+        required: true
+        schema: { type: string }
+      - name: lat
+        in: query
+        description: широта
+        required: true
+        schema: { type: number }
+      - name: lng
+        in: query
+        description: долгота
+        required: true
+        schema: { type: number }
+      - name: distance
+        in: query
+        description: радиус (до 50 км)
+        required: false
+        schema: { type: integer }
+      - name: lang
+        in: query
+        description: язык ответа
+        required: false
+        schema: { type: string }
+      - name: format
+        in: query
+        description: формат (json или xml)
+        required: false
+        schema: { type: string }
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NearestCity'
+  /v3.0/schedule/:
+    get:
+      tags:
+      - getScheduleOnStation
+      summary: Расписание рейсов по станции
+      operationId: getScheduleOnStation
+      parameters:
+      - name: apikey
+        in: query
+        description: API key
+        required: true
+        schema:
+          type: string
+      - name: station
+        in: query
+        description: Код станции
+        required: true
+        schema:
+          type: string
+      - name: date
+        in: query
+        description: Дата (YYYY‑MM‑DD)
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: transport_types
+        in: query
+        description: Тип транспорта (train, plane, bus …)
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleOnStation'
+  /v3.0/thread/:
+    get:
+      tags:
+      - getRouteStations
+      summary: Список станций следования (нитка)
+      operationId: getRouteStations
+      parameters:
+      - name: apikey
+        in: query
+        description: API key
+        required: true
+        schema: { type: string }
+      - name: uid
+        in: query
+        description: Идентификатор нитки
+        required: true
+        schema: { type: string }
+      - name: from
+        in: query
+        description: Код станции отправления
+        required: false
+        schema: { type: string }
+      - name: to
+        in: query
+        description: Код станции прибытия
+        required: false
+        schema: { type: string }
+      - name: format
+        in: query
+        description: Формат (json / xml)
+        required: false
+        schema: { type: string }
+      - name: lang
+        in: query
+        description: Язык ответа
+        required: false
+        schema: { type: string }
+      - name: date
+        in: query
+        description: Дата (YYYY‑MM‑DD)
+        required: false
+        schema: { type: string, format: date }
+      - name: show_systems
+        in: query
+        description: Вернуть коды систем
+        required: false
+        schema: { type: string }
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+  /v3.0/search/:
+    get:
+      tags:
+      - getScheduleBetweenStations
+      summary: Расписание рейсов между станциями
+      operationId: getScheduleBetweenStations
+      parameters:
+      - name: apikey
+        in: query
+        description: API key
+        required: true
+        schema:
+          type: string
+      - name: from
+        in: query
+        description: Код станции отправления
+        required: true
+        schema:
+          type: string
+      - name: to
+        in: query
+        description: Код станции прибытия
+        required: true
+        schema:
+          type: string
+      - name: date
+        in: query
+        description: Дата (YYYY‑MM‑DD)
+        required: false
+        schema:
+          type: string
+          format: date
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchedulePointPoint'
+  /v3.0/carrier/:
+    get:
+      tags:
+      - Информация о перевозчике
+      summary: Информация о перевозчике
+      operationId: getCarrier
+      parameters:
+      - name: apikey
+        in: query
+        description: API key
+        required: true
+        schema:
+          type: string
+      - name: code
+        in: query
+        description: Код перевозчика
+        required: true
+        schema:
+          type: string
+      - name: format
+        in: query
+        description: Формат (json или xml)
+        required: false
+        schema:
+          type: string
+      - name: lang
+        in: query
+        description: Язык ответа
+        required: false
+        schema:
+          type: string
+      - name: system
+        in: query
+        description: Система кодирования
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+  /v3.0/stations_list/:
+    get:
+      tags:
+        - Список всех доступных станций
+      summary: Полный список станций
+      operationId: getStationsList
+      parameters:
+        - name: apikey
+          in: query
+          description: API key
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Формат (json или xml)
+          required: false
+          schema:
+            type: string
+        - name: lang
+          in: query
+          description: Язык ответа
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: success
+          content:
+            text/html:
+              schema:
+                type: string
+  /v3.0/copyright/:
+    get:
+      tags:
+        - Копирайт
+      summary: Копирайт Яндекс Расписаний
+      operationId: getCopyright
+      parameters:
+        - name: apikey
+          in: query
+          description: API key
+          required: true
+          schema:
+            type: string
+        - name: format
+          in: query
+          description: Формат (json или xml)
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+components:
+  schemas:
+    Stations:
+      type: object
+      properties:
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        stations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Station'
+    Pagination:
+      type: object
+      properties:
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+    Station:
+      type: object
+      properties:
+        type:
+          type: string
+        title:
+          type: string
+        short_title:
+          type: string
+        popular_title:
+          type: string
+        code:
+          type: string
+        lat:
+          type: number
+        lng:
+          type: number
+        station_type:
+          type: string
+        station_type_name:
+          type: string
+        transport_type:
+          type: string
+        distance:
+          type: number
+        majority:
+          type: integer
+        type_choices:
+          $ref: '#/components/schemas/Schedule'
+    Schedule:
+      type: object
+      properties:
+        desktop_url:
+          type: string
+        touch_url:
+          type: string
+    ScheduleOnStation:
+      type: object
+      additionalProperties: true
+    Route:
+      type: object
+      additionalProperties: true
+    Thread:
+      type: object
+      properties:
+        uid:
+          type: string
+
+    Segment:
+      type: object
+      properties:
+        thread:
+          $ref: '#/components/schemas/Thread'
+    SchedulePointPoint:
+      type: object
+      properties:
+        segments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Segment'
+
+    NearestCity:
+      type: object
+      properties:
+        distance:
+          type: number
+        code:
+          type: string
+        title:
+          type: string
+        popular_title:
+          type: string
+        short_title:
+          type: string
+    Carrier:
+      type: object
+      properties:
+        code:
+          type: string
+        title:
+          type: string
+        codes:
+          type: object
+          additionalProperties: true
+        contacts:
+          type: object
+          additionalProperties: true
+        url:
+          type: string
+        logo:
+          type: string
