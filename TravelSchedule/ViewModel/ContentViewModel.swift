@@ -1,37 +1,20 @@
 //
-//  ContentView.swift
+//  ContentViewModel.swift
 //  TravelSchedule
 //
+//  Created by Александр Дудченко on 15.05.2025.
+//
 
+import Foundation
 import SwiftUI
 
-struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            
-            Text("Hello, world!")
-            
-            Button("Загрузить") {
-                loadNearestStations()
-            }
-            .buttonStyle(.borderedProminent)
-        }
-        .padding()
-    }
-    
-    private func log(_ message: String, emoji: String = "🔹") {
-        print("\(emoji) \(message)")
-    }
-    
-    // MARK: - Network
-    private func loadNearestStations() {
-        Task {
-            let networkService = NetworkService()
-            log("Старт загрузки данных", emoji: "🚀")
+@MainActor
+final class ContentViewModel: ObservableObject {
+    private let networkService = NetworkService()
 
+    func loadNearestStations() {
+        Task {
+            log("Старт загрузки данных", emoji: "🚀")
             do {
                 let nearest = try await networkService.getNearestStations(
                     lat: 59.864177,
@@ -115,11 +98,12 @@ struct ContentView: View {
             } catch {
                 log("Ошибка при загрузке копирайта: \(error)", emoji: "❌")
             }
+
             log("Загрузка завершена", emoji: "✅")
         }
     }
-}
 
-#Preview {
-    ContentView()
+    private func log(_ message: String, emoji: String = "🔹") {
+        print("\(emoji) \(message)")
+    }
 }
