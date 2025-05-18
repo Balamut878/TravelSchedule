@@ -12,11 +12,14 @@ struct StationInputView: View {
     @Binding var from: String
     @Binding var to: String
 
+    var onFromTap: (() -> Void)? = nil
+    var onToTap: (() -> Void)? = nil
+
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
             VStack(alignment: .leading, spacing: 0) {
                 Button(action: {
-                    // Открыть экран выбора станции "Откуда"
+                    onFromTap?()
                 }) {
                     HStack {
                         Text(from.isEmpty ? "Откуда" : from)
@@ -28,7 +31,7 @@ struct StationInputView: View {
                 }
 
                 Button(action: {
-                    // Открыть экран выбора станции "Куда"
+                    onToTap?()
                 }) {
                     HStack {
                         Text(to.isEmpty ? "Куда" : to)
@@ -66,5 +69,10 @@ struct StationInputView: View {
 }
 
 #Preview {
-    StationInputView(from: .constant(""), to: .constant(""))
+    StationInputView(
+        from: .constant(""),
+        to: .constant(""),
+        onFromTap: {},
+        onToTap: {}
+    )
 }
