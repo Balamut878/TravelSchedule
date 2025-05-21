@@ -56,9 +56,3 @@ struct MainTabView: View {
         }
     }
 }
-
-struct SettingsView: View {
-    var body: some View {
-        Text("Настройки")
-    }
-}
