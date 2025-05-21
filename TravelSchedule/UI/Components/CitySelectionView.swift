@@ -64,7 +64,8 @@ struct CitySelectionView: View {
                 if filteredCities.isEmpty {
                     Spacer()
                     Text("Город не найден")
-                        .font(.system(size: 17, weight: .bold))
+                        .font(.system(size: 24, weight: .bold))
+                        .frame(maxWidth: .infinity, alignment: .center)
                         .foregroundStyle(colorScheme == .dark ? Color("White Universal") : Color("Black Universal"))
                     Spacer()
                 } else {
