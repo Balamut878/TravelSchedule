@@ -23,7 +23,7 @@ struct StationInputView: View {
                 }) {
                     HStack {
                         Text(from.isEmpty ? "Откуда" : from)
-                            .foregroundColor(Color("Gray Universal"))
+                            .foregroundStyle(from.isEmpty ? Color("Gray Universal") : Color("Black Universal"))
                             .frame(height: 48)
                             .padding(.horizontal, 16)
                         Spacer()
@@ -35,7 +35,7 @@ struct StationInputView: View {
                 }) {
                     HStack {
                         Text(to.isEmpty ? "Куда" : to)
-                            .foregroundColor(Color("Gray Universal"))
+                            .foregroundStyle(to.isEmpty ? Color("Gray Universal") : Color("Black Universal"))
                             .frame(height: 48)
                             .padding(.horizontal, 16)
                         Spacer()

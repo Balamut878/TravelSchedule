@@ -27,14 +27,14 @@ struct ContentView: View {
         .padding(.top, 252)
         .padding(.bottom, 32)
         .sheet(isPresented: $isSelectingFrom) {
-            CitySelectionView { selected in
-                fromStation = selected
+            CityAndStationSelectionView { result in
+                fromStation = result
                 isSelectingFrom = false
             }
         }
         .sheet(isPresented: $isSelectingTo) {
-            CitySelectionView { selected in
-                toStation = selected
+            CityAndStationSelectionView { result in
+                toStation = result
                 isSelectingTo = false
             }
         }
