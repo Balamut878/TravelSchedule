@@ -72,27 +72,25 @@ struct CitySelectionView: View {
                     ScrollView {
                         VStack(spacing: 4) {
                             ForEach(filteredCities, id: \.self) { city in
-                                HStack {
-                                    Text(city)
-                                        .font(.system(size: 17, weight: .regular))
-                                        .kerning(-0.41)
-                                        .foregroundStyle(colorScheme == .dark ? Color("White Universal") : Color("Black Universal"))
-                                    Spacer()
-                                    Image(systemName: "chevron.right")
-                                        .foregroundStyle(colorScheme == .dark ? Color("White Universal") : Color("Black Universal"))
-                                }
-                                .frame(height: 60)
-                                .padding(.horizontal, 16)
-                                .background(
-                                    colorScheme == .dark
-                                    ? Color("Black Universal")
-                                    : Color("White Universal")
-                                )
-                                .cornerRadius(8)
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    onCitySelected(city)
-                                    dismiss()
+                                NavigationLink(destination: StationSelectionView()) {
+                                    HStack {
+                                        Text(city)
+                                            .font(.system(size: 17, weight: .regular))
+                                            .kerning(-0.41)
+                                            .foregroundStyle(colorScheme == .dark ? Color("White Universal") : Color("Black Universal"))
+                                        Spacer()
+                                        Image(systemName: "chevron.right")
+                                            .foregroundStyle(colorScheme == .dark ? Color("White Universal") : Color("Black Universal"))
+                                    }
+                                    .frame(height: 60)
+                                    .padding(.horizontal, 16)
+                                    .background(
+                                        colorScheme == .dark
+                                        ? Color("Black Universal")
+                                        : Color("White Universal")
+                                    )
+                                    .cornerRadius(8)
+                                    .contentShape(Rectangle())
                                 }
                             }
                         }
