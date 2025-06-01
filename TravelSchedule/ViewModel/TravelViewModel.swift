@@ -7,8 +7,15 @@
 
 import Foundation
 import SwiftUI
+import Network
 
 final class TravelViewModel: ObservableObject {
+    enum TravelError {
+        case noInternet
+        case server
+    }
+
+    @Published var travelError: TravelError? = nil
     @Published var fromStation: String = ""
     @Published var toStation: String = ""
     @Published var originStation: String = ""
@@ -48,6 +55,30 @@ final class TravelViewModel: ObservableObject {
             note: "Прямой рейс"
         )
     ]
+
+    private let monitor = NWPathMonitor()
+    private let queue = DispatchQueue(label: "NetworkMonitor")
+
+    init() {
+        monitor.pathUpdateHandler = { [weak self] path in
+            DispatchQueue.main.async {
+                if path.status == .unsatisfied {
+                    self?.travelError = .noInternet
+                } else {
+                    self?.travelError = nil
+                }
+            }
+        }
+        monitor.start(queue: queue)
+    }
+
+    func simulateServerError() {
+        travelError = .server
+    }
+
+    func clearError() {
+        travelError = nil
+    }
 
     var filteredCarriers: [LocalCarrier] {
         allCarriers.filter { carrier in
