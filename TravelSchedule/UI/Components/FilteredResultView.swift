@@ -12,6 +12,7 @@ import SwiftUI
 struct FilteredResultView: View {
     @EnvironmentObject var travelViewModel: TravelViewModel
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.dismiss) private var dismiss
 
     private var filteredCarriers: [LocalCarrier] {
         let allCarriers = [
@@ -107,60 +108,81 @@ struct FilteredResultView: View {
                 } else {
                     VStack(spacing: 8) {
                         ForEach(carriers) { carrier in
-                            VStack(spacing: 0) {
-                                HStack(alignment: .top, spacing: 12) {
-                                    Image(uiImage: UIImage(named: carrier.logoName) ?? UIImage())
-                                        .renderingMode(.original)
-                                        .resizable()
-                                        .frame(width: 38, height: 38)
-                                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                                    
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(carrier.title)
-                                            .font(.system(size: 17, weight: .regular))
-                                            .foregroundColor(Color("Black Universal"))
-                                        if let note = carrier.note {
-                                            Text(note)
-                                                .font(.system(size: 12))
-                                                .foregroundColor(Color.red)
+                            NavigationLink(destination:
+                                CarrierDetailView(
+                                    logoName: carrier.logoName,
+                                    companyName: "ОАО «\(carrier.title)»",
+                                    email: "i.lozgkina@yandex.ru",
+                                    phone: "+7 (904) 329-27-71"
+                                )
+                                .navigationBarTitleDisplayMode(.inline)
+                                .navigationBarBackButtonHidden(true)
+                                .toolbar {
+                                    ToolbarItem(placement: .navigationBarLeading) {
+                                        Button(action: {
+                                            dismiss()
+                                        }) {
+                                            Image(systemName: "chevron.left")
+                                                .foregroundColor(colorScheme == .dark ? Color("White Universal") : Color("Black Universal"))
                                         }
                                     }
-                                    
-                                    Spacer()
-                                    
-                                    Text(carrier.date)
-                                        .font(.system(size: 12))
-                                        .foregroundColor(Color("Gray Universal"))
-                                        .padding(.top, 2)
                                 }
-                                .padding(.bottom, 10)
-                                
-                                HStack(spacing: 8) {
-                                    Text(carrier.departureTime)
-                                        .font(.system(size: 17))
-                                        .foregroundColor(Color("Black Universal"))
+                            ) {
+                                VStack(spacing: 0) {
+                                    HStack(alignment: .top, spacing: 12) {
+                                        Image(uiImage: UIImage(named: carrier.logoName) ?? UIImage())
+                                            .renderingMode(.original)
+                                            .resizable()
+                                            .frame(width: 38, height: 38)
+                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                                        
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(carrier.title)
+                                                .font(.system(size: 17, weight: .regular))
+                                                .foregroundColor(Color("Black Universal"))
+                                            if let note = carrier.note {
+                                                Text(note)
+                                                    .font(.system(size: 12))
+                                                    .foregroundColor(Color.red)
+                                            }
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        Text(carrier.date)
+                                            .font(.system(size: 12))
+                                            .foregroundColor(Color("Gray Universal"))
+                                            .padding(.top, 2)
+                                    }
+                                    .padding(.bottom, 10)
                                     
-                                    Rectangle()
-                                        .fill(Color("Gray Universal"))
-                                        .frame(height: 1)
-                                    
-                                    Text(carrier.duration)
-                                        .font(.system(size: 12))
-                                        .foregroundColor(Color("Gray Universal"))
-                                    
-                                    Rectangle()
-                                        .fill(Color("Gray Universal"))
-                                        .frame(height: 1)
-                                    
-                                    Text(carrier.arrivalTime)
-                                        .font(.system(size: 17))
-                                        .foregroundColor(Color("Black Universal"))
+                                    HStack(spacing: 8) {
+                                        Text(carrier.departureTime)
+                                            .font(.system(size: 17))
+                                            .foregroundColor(Color("Black Universal"))
+                                        
+                                        Rectangle()
+                                            .fill(Color("Gray Universal"))
+                                            .frame(height: 1)
+                                        
+                                        Text(carrier.duration)
+                                            .font(.system(size: 12))
+                                            .foregroundColor(Color("Gray Universal"))
+                                        
+                                        Rectangle()
+                                            .fill(Color("Gray Universal"))
+                                            .frame(height: 1)
+                                        
+                                        Text(carrier.arrivalTime)
+                                            .font(.system(size: 17))
+                                            .foregroundColor(Color("Black Universal"))
+                                    }
                                 }
+                                .padding(16)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(Color(red: 0.933, green: 0.933, blue: 0.933))
+                                .clipShape(RoundedRectangle(cornerRadius: 24))
                             }
-                            .padding(16)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color(red: 0.933, green: 0.933, blue: 0.933))
-                            .clipShape(RoundedRectangle(cornerRadius: 24))
                         }
                     }
                     .padding(16)
@@ -186,8 +208,18 @@ struct FilteredResultView: View {
                 .padding(.bottom, 16)
             }
         }
-        .navigationBarBackButtonHidden(false)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    dismiss()
+                }) {
+                    Image(systemName: "chevron.left")
+                        .foregroundColor(colorScheme == .dark ? Color("White Universal") : Color("Black Universal"))
+                }
+            }
+        }
     }
 }
 
