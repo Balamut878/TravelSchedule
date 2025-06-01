@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct FilterView: View {
+    @EnvironmentObject var travelViewModel: TravelViewModel
+    @State private var navigateToResult = false
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
 
@@ -84,7 +86,9 @@ struct FilterView: View {
 
             if !selectedTimes.isEmpty || showTransfers != nil {
                 Button(action: {
-                    dismiss()
+                    travelViewModel.selectedTimes = selectedTimes
+                    travelViewModel.allowTransfers = showTransfers
+                    navigateToResult = true
                 }) {
                     Text("Применить")
                         .font(.system(size: 17, weight: .bold))
@@ -100,6 +104,20 @@ struct FilterView: View {
         }
         .padding(16)
         .navigationBarBackButtonHidden(false)
+        .navigationDestination(isPresented: $navigateToResult) {
+            FilteredResultView()
+                .navigationBarBackButtonHidden(true)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button(action: {
+                            navigateToResult = false
+                        }) {
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(colorScheme == .dark ? Color("White Universal") : Color("Black Universal"))
+                        }
+                    }
+                }
+        }
     }
 }
 

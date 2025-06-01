@@ -66,7 +66,8 @@ struct CarrierListView: View {
                 let to = travelViewModel.toStation.isEmpty ? "Куда" : travelViewModel.toStation
                 Text("\(from) → \(to)")
                     .font(.system(size: 24, weight: .bold))
-                    .lineLimit(2)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
                     .multilineTextAlignment(.leading)
                     .foregroundStyle(colorScheme == .dark ? Color("White Universal") : Color("Black Universal"))
                     .padding(.top, 16)
