@@ -23,6 +23,7 @@ struct LocalCarrier: Identifiable {
 struct CarrierListView: View {
     @EnvironmentObject var travelViewModel: TravelViewModel
     @Environment(\.colorScheme) private var colorScheme
+    @State private var isShowingFilter = false
 
     private let carriers: [LocalCarrier] = [
         LocalCarrier(
@@ -134,7 +135,9 @@ struct CarrierListView: View {
                 }
                 .padding(.bottom, 16)
 
-                Button(action: {}) {
+                Button {
+                    isShowingFilter = true
+                } label: {
                     Text("Уточнить время")
                         .font(.system(size: 17, weight: .bold))
                         .foregroundStyle(Color("White Universal"))
@@ -160,6 +163,22 @@ struct CarrierListView: View {
                 }
             }
             
+        }
+        .sheet(isPresented: $isShowingFilter) {
+            NavigationStack {
+                FilterView()
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button(action: {
+                                isShowingFilter = false
+                            }) {
+                                Image(systemName: "chevron.left")
+                                    .foregroundStyle(colorScheme == .dark ? Color("White Universal") : Color("Black Universal"))
+                            }
+                        }
+                    }
+            }
         }
     }
 }
