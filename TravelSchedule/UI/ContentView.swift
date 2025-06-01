@@ -6,19 +6,19 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var viewModel = ContentViewModel()
-    @State private var fromStation: String = ""
-    @State private var toStation: String = ""
+    @StateObject var travelViewModel = TravelViewModel()
     @State private var isSelectingFrom = false
     @State private var isSelectingTo = false
+    @State private var isShowingCarrierList = false
     
     var body: some View {
         VStack(spacing: 24) {
             StationInputView(
-                from: $fromStation,
-                to: $toStation,
+                from: $travelViewModel.fromStation,
+                to: $travelViewModel.toStation,
                 onFromTap: { isSelectingFrom = true },
-                onToTap: { isSelectingTo = true }
+                onToTap: { isSelectingTo = true },
+                onFindTap: { isShowingCarrierList = true }
             )
 
             Spacer()
@@ -28,15 +28,20 @@ struct ContentView: View {
         .padding(.bottom, 32)
         .sheet(isPresented: $isSelectingFrom) {
             CityAndStationSelectionView { result in
-                fromStation = result
+                travelViewModel.fromStation = result
                 isSelectingFrom = false
             }
         }
         .sheet(isPresented: $isSelectingTo) {
             CityAndStationSelectionView { result in
-                toStation = result
+                travelViewModel.toStation = result
                 isSelectingTo = false
             }
+        }
+        .sheet(isPresented: $isShowingCarrierList) {
+            CarrierListView()
+                .environmentObject(travelViewModel)
+                .id(travelViewModel.fromStation + travelViewModel.toStation)
         }
     }
 }
