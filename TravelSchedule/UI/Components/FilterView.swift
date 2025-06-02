@@ -118,11 +118,12 @@ struct FilterView: View {
                     }
                 }
         }
+        .background(AppColors.background.ignoresSafeArea())
     }
 }
 
 #Preview {
     NavigationStack {
-        FilterView()
+        FilterView().environmentObject(TravelViewModel())
     }
 }

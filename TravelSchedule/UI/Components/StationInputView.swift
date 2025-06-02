@@ -50,7 +50,9 @@ struct StationInputView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 Button(action: {
-                    // Логика смены направления
+                    let temp = from
+                    from = to
+                    to = temp
                 }) {
                     Image("change")
                         .resizable()

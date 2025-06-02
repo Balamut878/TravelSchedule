@@ -26,19 +26,19 @@ struct ContentView: View {
         .padding(.horizontal, 16)
         .padding(.top, 252)
         .padding(.bottom, 32)
-        .sheet(isPresented: $isSelectingFrom) {
+        .fullScreenCover(isPresented: $isSelectingFrom) {
             CityAndStationSelectionView { result in
                 travelViewModel.fromStation = result
                 isSelectingFrom = false
             }
         }
-        .sheet(isPresented: $isSelectingTo) {
+        .fullScreenCover(isPresented: $isSelectingTo) {
             CityAndStationSelectionView { result in
                 travelViewModel.toStation = result
                 isSelectingTo = false
             }
         }
-        .sheet(isPresented: $isShowingCarrierList) {
+        .fullScreenCover(isPresented: $isShowingCarrierList) {
             CarrierListView()
                 .environmentObject(travelViewModel)
                 .id(travelViewModel.fromStation + travelViewModel.toStation)

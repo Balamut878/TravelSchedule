@@ -55,8 +55,10 @@ struct CarrierDetailView: View {
 
             Spacer()
         }
+        .background(Color("AppBackground"))
         .padding(.top, 32)
         .padding(.horizontal, 0)
+        .background(Color("AppBackground").ignoresSafeArea())
         .navigationTitle("Информация о перевозчике")
         .navigationBarTitleDisplayMode(.inline)
     }

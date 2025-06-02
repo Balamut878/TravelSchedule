@@ -165,10 +165,11 @@ struct CarrierListView: View {
             }
             
         }
-        .sheet(isPresented: $isShowingFilter) {
+        .fullScreenCover(isPresented: $isShowingFilter) {
             NavigationStack {
                 FilterView()
                     .navigationBarTitleDisplayMode(.inline)
+                    .navigationBarBackButtonHidden(true)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarLeading) {
                             Button(action: {

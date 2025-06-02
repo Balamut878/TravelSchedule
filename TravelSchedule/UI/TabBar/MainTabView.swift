@@ -35,7 +35,7 @@ struct MainTabView: View {
                     tabBarButton(index: 1, imageName: "Settings")
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: 83)
+                .frame(height: 49)
                 .padding(.horizontal, 56)
                 .background(AppColors.background)
             }

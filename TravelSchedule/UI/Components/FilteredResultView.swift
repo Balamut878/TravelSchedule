@@ -209,17 +209,8 @@ struct FilteredResultView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .background(colorScheme == .dark ? Color("AppBackground") : Color.white)
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    dismiss()
-                }) {
-                    Image(systemName: "chevron.left")
-                        .foregroundColor(colorScheme == .dark ? Color("White Universal") : Color("Black Universal"))
-                }
-            }
-        }
     }
 }
 
