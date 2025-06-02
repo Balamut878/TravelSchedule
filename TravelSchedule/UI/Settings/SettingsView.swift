@@ -10,6 +10,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @AppStorage("isDarkMode") private var isDarkMode = false
+    @State private var showAgreement = false
     
     var body: some View {
         NavigationView {
@@ -28,7 +29,9 @@ struct SettingsView: View {
                     .padding(.horizontal, 16)
                     .background(isDarkMode ? Color("Black Universal") : Color("White Universal"))
 
-                    NavigationLink(destination: AgreementView()) {
+                    Button {
+                        showAgreement = true
+                    } label: {
                         HStack {
                             Text("Пользовательское соглашение")
                                 .font(.system(size: 17))
@@ -43,6 +46,11 @@ struct SettingsView: View {
                         .frame(height: 60)
                         .padding(.horizontal, 16)
                         .background(isDarkMode ? Color("Black Universal") : Color("White Universal"))
+                    }
+                    .fullScreenCover(isPresented: $showAgreement) {
+                        NavigationStack {
+                            AgreementView()
+                        }
                     }
                 }
                 .padding(.top, 16)
