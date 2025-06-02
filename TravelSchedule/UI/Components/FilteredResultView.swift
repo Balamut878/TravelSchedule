@@ -96,6 +96,7 @@ struct FilteredResultView: View {
                 if carriers.isEmpty {
                     VStack {
                         Spacer()
+                        // Обратите внимание "Вариантов нет" присутсвует в проекте - День 12:00 - 18:00 пересадки - нет!
                         Text("Вариантов нет")
                             .font(.system(size: 24, weight: .bold))
                             .foregroundStyle(colorScheme == .dark ? Color("White Universal") : Color("Black Universal"))
