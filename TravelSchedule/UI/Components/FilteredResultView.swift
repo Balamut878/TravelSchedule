@@ -15,38 +15,7 @@ struct FilteredResultView: View {
     @Environment(\.dismiss) private var dismiss
 
     private var filteredCarriers: [LocalCarrier] {
-        let allCarriers = [
-            LocalCarrier(
-                title: "РЖД",
-                subtitle: "Российские железные дороги",
-                logoName: "rzd_logo",
-                date: "14 января",
-                departureTime: "22:30",
-                arrivalTime: "08:15",
-                duration: "20 часов",
-                note: "С пересадкой в Костроме"
-            ),
-            LocalCarrier(
-                title: "ФГК",
-                subtitle: "Федеральная грузовая компания",
-                logoName: "fgk_logo",
-                date: "15 января",
-                departureTime: "10:00",
-                arrivalTime: "18:30",
-                duration: "8 часов 30 минут",
-                note: nil
-            ),
-            LocalCarrier(
-                title: "Урал",
-                subtitle: "Уральская железная дорога",
-                logoName: "ural_logo",
-                date: "16 января",
-                departureTime: "06:45",
-                arrivalTime: "14:20",
-                duration: "7 часов 35 минут",
-                note: "Прямой рейс"
-            )
-        ]
+        let allCarriers = LocalCarrier.mockData
 
         return allCarriers.filter { carrier in
             let matchesTransfers = {
@@ -129,60 +98,7 @@ struct FilteredResultView: View {
                                     }
                                 }
                             ) {
-                                VStack(spacing: 0) {
-                                    HStack(alignment: .top, spacing: 12) {
-                                        Image(uiImage: UIImage(named: carrier.logoName) ?? UIImage())
-                                            .renderingMode(.original)
-                                            .resizable()
-                                            .frame(width: 38, height: 38)
-                                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                                        
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Text(carrier.title)
-                                                .font(.system(size: 17, weight: .regular))
-                                                .foregroundColor(Color("Black Universal"))
-                                            if let note = carrier.note {
-                                                Text(note)
-                                                    .font(.system(size: 12))
-                                                    .foregroundColor(Color.red)
-                                            }
-                                        }
-                                        
-                                        Spacer()
-                                        
-                                        Text(carrier.date)
-                                            .font(.system(size: 12))
-                                            .foregroundColor(Color("Gray Universal"))
-                                            .padding(.top, 2)
-                                    }
-                                    .padding(.bottom, 10)
-                                    
-                                    HStack(spacing: 8) {
-                                        Text(carrier.departureTime)
-                                            .font(.system(size: 17))
-                                            .foregroundColor(Color("Black Universal"))
-                                        
-                                        Rectangle()
-                                            .fill(Color("Gray Universal"))
-                                            .frame(height: 1)
-                                        
-                                        Text(carrier.duration)
-                                            .font(.system(size: 12))
-                                            .foregroundColor(Color("Gray Universal"))
-                                        
-                                        Rectangle()
-                                            .fill(Color("Gray Universal"))
-                                            .frame(height: 1)
-                                        
-                                        Text(carrier.arrivalTime)
-                                            .font(.system(size: 17))
-                                            .foregroundColor(Color("Black Universal"))
-                                    }
-                                }
-                                .padding(16)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color(red: 0.933, green: 0.933, blue: 0.933))
-                                .clipShape(RoundedRectangle(cornerRadius: 24))
+                                CarrierCardView(carrier: carrier, colorScheme: colorScheme)
                             }
                         }
                     }
