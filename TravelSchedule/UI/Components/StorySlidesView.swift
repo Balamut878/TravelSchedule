@@ -4,8 +4,6 @@
 //
 //  Created by Александр Дудченко on 14.06.2025.
 //
-
-import Foundation
 import SwiftUI
 
 struct StorySlidesView: View {
@@ -19,9 +17,9 @@ struct StorySlidesView: View {
     init(
         slides: [String],
         startingIndex: Int = 0,
-        onNextStory: (() -> Void)? = nil,
-        onPreviousStory: (() -> Void)? = nil,
-        markStoryViewed: (() -> Void)? = nil
+        onNextStory: (() -> Void)?,
+        onPreviousStory: (() -> Void)?,
+        markStoryViewed: (() -> Void)?
     ) {
         self.slides = slides
         self.startingIndex = startingIndex
@@ -39,6 +37,7 @@ struct StorySlidesView: View {
         ZStack(alignment: .topTrailing) {
             Color("Black Universal")
                 .ignoresSafeArea()
+
             VStack(spacing: 0) {
                 TabView(selection: $currentIndex) {
                     ForEach(Array(slides.enumerated()), id: \.offset) { index, slide in
@@ -49,32 +48,21 @@ struct StorySlidesView: View {
                                 .frame(height: 710)
                                 .frame(maxWidth: .infinity)
                                 .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
+
                             VStack {
                                 Spacer()
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text("Здесь должен быть какой то текст!")
-                                        .font(.system(size: 34, weight: .bold))
-                                        .foregroundColor(Color("White Universal"))
-                                        .lineLimit(2)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-
-                                    Text("Здесь должен быть какой то текст!")
-                                        .font(.system(size: 20, weight: .regular))
-                                        .foregroundColor(Color("White Universal"))
-                                        .lineLimit(3)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                }
-                                .padding(.horizontal, 16)
-                                .padding(.bottom, 40)
-                                .background(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            Color("Black Universal").opacity(0.0),
-                                            Color("Black Universal").opacity(0.5)
-                                        ]),
-                                        startPoint: .top, endPoint: .bottom
+                                titleBlock
+                                    .padding(.horizontal, 16)
+                                    .padding(.bottom, 40)
+                                    .background(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [
+                                                Color("Black Universal").opacity(0.0),
+                                                Color("Black Universal").opacity(0.5)
+                                            ]),
+                                            startPoint: .top, endPoint: .bottom
+                                        )
                                     )
-                                )
                             }
                         }
                         .tag(index)
@@ -135,8 +123,7 @@ struct StorySlidesView: View {
                         } else {
                             onNextStory?()
                         }
-                    }
-                    else if value.translation.width > 50 {
+                    } else if value.translation.width > 50 {
                         if currentIndex > 0 {
                             currentIndex -= 1
                         } else {
@@ -151,27 +138,40 @@ struct StorySlidesView: View {
         currentIndex = startingIndex
         progress = 0
         timer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
-            if progress >= 1.0 {
+            guard progress < 1.0 else {
                 if currentIndex == slides.count - 1 {
                     stopAutoPlay()
-                    if let onNextStory = onNextStory {
-                        onNextStory()
-                    } else {
-                        dismiss()
-                    }
-                    return
+                    onNextStory?() ?? dismiss()
                 } else {
                     progress = 0
                     currentIndex += 1
                 }
-            } else {
-                progress += 0.05 / 10
+                return
             }
+            progress += 0.005
         }
     }
 
     private func stopAutoPlay() {
         timer?.invalidate()
         timer = nil
+    }
+}
+
+private extension StorySlidesView {
+    var titleBlock: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Здесь должен быть какой то текст!")
+                .font(.system(size: 34, weight: .bold))
+                .foregroundColor(Color("White Universal"))
+                .lineLimit(2)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text("Здесь должен быть какой то текст!")
+                .font(.system(size: 20, weight: .regular))
+                .foregroundColor(Color("White Universal"))
+                .lineLimit(3)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 }

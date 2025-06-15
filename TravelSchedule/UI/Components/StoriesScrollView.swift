@@ -5,7 +5,6 @@
 //  Created by Александр Дудченко on 14.06.2025.
 //
 
-import Foundation
 import SwiftUI
 
 struct StoriesScrollView: View {
@@ -14,7 +13,7 @@ struct StoriesScrollView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            ScrollView(.horizontal, showsIndicators: false) {
+            ScrollView(.horizontal) {
                 HStack(alignment: .top, spacing: 10) {
                     ForEach(stories) { story in
                         StoryPreviewView(story: story)
@@ -25,6 +24,7 @@ struct StoriesScrollView: View {
                 }
                 .padding(.leading, 16)
             }
+            .scrollIndicators(.hidden)
             .frame(height: 140)
             .padding(.top, 24)
         }
@@ -33,26 +33,40 @@ struct StoriesScrollView: View {
                 slides: story.slides,
                 startingIndex: 0,
                 onNextStory: {
-                    if let currentIndex = stories.firstIndex(where: { $0.id == story.id }),
-                       currentIndex + 1 < stories.count {
-                        selectedStory = stories[currentIndex + 1]
-                    } else {
-                        selectedStory = nil
-                    }
+                    goToNextStory(after: story)
                 },
                 onPreviousStory: {
-                    if let currentIndex = stories.firstIndex(where: { $0.id == story.id }), currentIndex > 0 {
-                        selectedStory = stories[currentIndex - 1]
-                    } else {
-                        selectedStory = nil
-                    }
+                    goToPreviousStory(before: story)
                 },
                 markStoryViewed: {
-                    if let index = stories.firstIndex(where: { $0.id == story.id }) {
-                        stories[index].isViewed = true
-                    }
+                    markViewed(story: story)
                 }
             )
+            .preferredColorScheme(.dark)
+        }
+    }
+
+    private func goToNextStory(after story: Story) {
+        guard let currentIndex = stories.firstIndex(where: { $0.id == story.id }) else { return }
+        if currentIndex + 1 < stories.count {
+            selectedStory = stories[currentIndex + 1]
+        } else {
+            selectedStory = nil
+        }
+    }
+
+    private func goToPreviousStory(before story: Story) {
+        guard let currentIndex = stories.firstIndex(where: { $0.id == story.id }) else { return }
+        if currentIndex > 0 {
+            selectedStory = stories[currentIndex - 1]
+        } else {
+            selectedStory = nil
+        }
+    }
+
+    private func markViewed(story: Story) {
+        if let index = stories.firstIndex(where: { $0.id == story.id }) {
+            stories[index].isViewed = true
         }
     }
 }
