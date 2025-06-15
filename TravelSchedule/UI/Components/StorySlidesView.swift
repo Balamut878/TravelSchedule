@@ -13,12 +13,20 @@ struct StorySlidesView: View {
     let slides: [String]
     let startingIndex: Int
     let onNextStory: (() -> Void)?
+    let onPreviousStory: (() -> Void)?
     @State private var currentIndex: Int
 
-    init(slides: [String], startingIndex: Int = 0, onNextStory: (() -> Void)? = nil, markStoryViewed: (() -> Void)? = nil) {
+    init(
+        slides: [String],
+        startingIndex: Int = 0,
+        onNextStory: (() -> Void)? = nil,
+        onPreviousStory: (() -> Void)? = nil,
+        markStoryViewed: (() -> Void)? = nil
+    ) {
         self.slides = slides
         self.startingIndex = startingIndex
         self.onNextStory = onNextStory
+        self.onPreviousStory = onPreviousStory
         self.markStoryViewed = markStoryViewed
         _currentIndex = State(initialValue: startingIndex)
     }
@@ -29,6 +37,8 @@ struct StorySlidesView: View {
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
+            Color("Black Universal")
+                .ignoresSafeArea()
             VStack(spacing: 0) {
                 TabView(selection: $currentIndex) {
                     ForEach(Array(slides.enumerated()), id: \.offset) { index, slide in
@@ -57,8 +67,13 @@ struct StorySlidesView: View {
                                 .padding(.horizontal, 16)
                                 .padding(.bottom, 40)
                                 .background(
-                                    LinearGradient(gradient: Gradient(colors: [Color.black.opacity(0.0), Color.black.opacity(0.5)]),
-                                                   startPoint: .top, endPoint: .bottom)
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [
+                                            Color("Black Universal").opacity(0.0),
+                                            Color("Black Universal").opacity(0.5)
+                                        ]),
+                                        startPoint: .top, endPoint: .bottom
+                                    )
                                 )
                             }
                         }
@@ -67,6 +82,7 @@ struct StorySlidesView: View {
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 .frame(height: 710)
+                .padding(.top, 31)
                 .onAppear {
                     markStoryViewed?()
                     startAutoPlay()
@@ -98,7 +114,7 @@ struct StorySlidesView: View {
             }
             .frame(height: 4)
             .padding(.horizontal, 16)
-            .padding(.top, 12)
+            .padding(.top, 53)
 
             Button(action: {
                 dismiss()
@@ -107,10 +123,28 @@ struct StorySlidesView: View {
                     .resizable()
                     .frame(width: 30, height: 30)
             }
-            .padding(.top, 50)
+            .padding(.top, 81)
             .padding(.trailing, 16)
         }
-        .ignoresSafeArea()
+        .highPriorityGesture(
+            DragGesture()
+                .onEnded { value in
+                    if value.translation.width < -50 {
+                        if currentIndex < slides.count - 1 {
+                            currentIndex += 1
+                        } else {
+                            onNextStory?()
+                        }
+                    }
+                    else if value.translation.width > 50 {
+                        if currentIndex > 0 {
+                            currentIndex -= 1
+                        } else {
+                            onPreviousStory?()
+                        }
+                    }
+                }
+        )
     }
 
     private func startAutoPlay() {
@@ -131,7 +165,7 @@ struct StorySlidesView: View {
                     currentIndex += 1
                 }
             } else {
-                progress += 0.05 / 2
+                progress += 0.05 / 10
             }
         }
     }

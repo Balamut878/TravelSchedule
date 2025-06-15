@@ -40,6 +40,13 @@ struct StoriesScrollView: View {
                         selectedStory = nil
                     }
                 },
+                onPreviousStory: {
+                    if let currentIndex = stories.firstIndex(where: { $0.id == story.id }), currentIndex > 0 {
+                        selectedStory = stories[currentIndex - 1]
+                    } else {
+                        selectedStory = nil
+                    }
+                },
                 markStoryViewed: {
                     if let index = stories.firstIndex(where: { $0.id == story.id }) {
                         stories[index].isViewed = true
