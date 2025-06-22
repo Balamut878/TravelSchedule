@@ -8,15 +8,16 @@
 import SwiftUI
 
 struct StoriesScrollView: View {
-    @State var stories: [Story]
+    @StateObject private var viewModel = StoriesViewModel()
     @State private var selectedStory: Story?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ScrollView(.horizontal) {
                 HStack(alignment: .top, spacing: 10) {
-                    ForEach(stories) { story in
+                    ForEach(viewModel.stories) { story in
                         StoryPreviewView(story: story)
+                            .environmentObject(viewModel)
                             .onTapGesture {
                                 selectedStory = story
                             }
@@ -39,7 +40,9 @@ struct StoriesScrollView: View {
                     goToPreviousStory(before: story)
                 },
                 markStoryViewed: {
-                    markViewed(story: story)
+                    if let story = selectedStory {
+                        viewModel.markStoryViewed(story)
+                    }
                 }
             )
             .preferredColorScheme(.dark)
@@ -47,30 +50,24 @@ struct StoriesScrollView: View {
     }
 
     private func goToNextStory(after story: Story) {
-        guard let currentIndex = stories.firstIndex(where: { $0.id == story.id }) else { return }
-        if currentIndex + 1 < stories.count {
-            selectedStory = stories[currentIndex + 1]
+        guard let currentIndex = viewModel.stories.firstIndex(where: { $0.id == story.id }) else { return }
+        if currentIndex + 1 < viewModel.stories.count {
+            selectedStory = viewModel.stories[currentIndex + 1]
         } else {
             selectedStory = nil
         }
     }
 
     private func goToPreviousStory(before story: Story) {
-        guard let currentIndex = stories.firstIndex(where: { $0.id == story.id }) else { return }
+        guard let currentIndex = viewModel.stories.firstIndex(where: { $0.id == story.id }) else { return }
         if currentIndex > 0 {
-            selectedStory = stories[currentIndex - 1]
+            selectedStory = viewModel.stories[currentIndex - 1]
         } else {
             selectedStory = nil
-        }
-    }
-
-    private func markViewed(story: Story) {
-        if let index = stories.firstIndex(where: { $0.id == story.id }) {
-            stories[index].isViewed = true
         }
     }
 }
 
 #Preview {
-    StoriesScrollView(stories: Story.mockData)
+    StoriesScrollView()
 }

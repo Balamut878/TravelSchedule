@@ -13,7 +13,7 @@ struct ContentView: View {
     
     var body: some View {
         VStack(spacing: 24) {
-            StoriesScrollView(stories: Story.mockData)
+            StoriesScrollView()
                 .padding(.top, 44)
 
             StationInputView(

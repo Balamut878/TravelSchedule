@@ -9,42 +9,30 @@ import SwiftUI
 
 struct FilterView: View {
     @EnvironmentObject var travelViewModel: TravelViewModel
+    @StateObject private var filterViewModel = FilterViewModel()
     @State private var navigateToResult = false
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
 
-    @State private var selectedTimes: Set<String> = []
-    @State private var showTransfers: Bool?
-
-    let timeOptions = [
-        "Утро 06:00 - 12:00",
-        "День 12:00 - 18:00",
-        "Вечер 18:00 - 00:00",
-        "Ночь 00:00 - 06:00"
-    ]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
             Text("Время отправления")
                 .font(.system(size: 24, weight: .bold))
 
-            ForEach(timeOptions, id: \.self) { option in
+            ForEach(filterViewModel.timeOptions, id: \.self) { option in
                 HStack {
                     Text(option)
                         .font(.system(size: 17, weight: .regular))
                         .kerning(-0.41)
                     Spacer()
-                    Image(selectedTimes.contains(option) ? "checkbox_on" : "checkbox_off")
+                    Image(filterViewModel.selectedTimes.contains(option) ? "checkbox_on" : "checkbox_off")
                         .renderingMode(.template)
                         .resizable()
                         .foregroundStyle(colorScheme == .dark ? Color("White Universal") : Color("Black Universal"))
                         .frame(width: 20, height: 20)
                         .onTapGesture {
-                            if selectedTimes.contains(option) {
-                                selectedTimes.remove(option)
-                            } else {
-                                selectedTimes.insert(option)
-                            }
+                            filterViewModel.toggleTimeOption(option)
                         }
                 }
             }
@@ -57,13 +45,13 @@ struct FilterView: View {
                     .font(.system(size: 17, weight: .regular))
                     .kerning(-0.41)
                 Spacer()
-                Image(showTransfers == true ? "radio_on" : "radio_off")
+                Image(filterViewModel.showTransfers == true ? "radio_on" : "radio_off")
                     .renderingMode(.template)
                     .resizable()
                     .foregroundStyle(colorScheme == .dark ? Color("White Universal") : Color("Black Universal"))
                     .frame(width: 20, height: 20)
                     .onTapGesture {
-                        showTransfers = true
+                        filterViewModel.setTransfers(true)
                     }
             }
 
@@ -72,22 +60,22 @@ struct FilterView: View {
                     .font(.system(size: 17, weight: .regular))
                     .kerning(-0.41)
                 Spacer()
-                Image(showTransfers == false ? "radio_on" : "radio_off")
+                Image(filterViewModel.showTransfers == false ? "radio_on" : "radio_off")
                     .renderingMode(.template)
                     .resizable()
                     .foregroundStyle(colorScheme == .dark ? Color("White Universal") : Color("Black Universal"))
                     .frame(width: 20, height: 20)
                     .onTapGesture {
-                        showTransfers = false
+                        filterViewModel.setTransfers(false)
                     }
             }
 
             Spacer()
 
-            if !selectedTimes.isEmpty || showTransfers != nil {
+            if filterViewModel.isApplyButtonEnabled {
                 Button(action: {
-                    travelViewModel.selectedTimes = selectedTimes
-                    travelViewModel.allowTransfers = showTransfers
+                    travelViewModel.selectedTimes = filterViewModel.selectedTimes
+                    travelViewModel.allowTransfers = filterViewModel.showTransfers
                     navigateToResult = true
                 }) {
                     Text("Применить")

@@ -18,6 +18,8 @@ final class TravelViewModel: ObservableObject {
     @Published var travelError: TravelError? = nil
     @Published var fromStation: String = ""
     @Published var toStation: String = ""
+    @Published var selectedFromStation: Station? = nil
+    @Published var selectedToStation: Station? = nil
     @Published var originStation: String = ""
     @Published var destinationStation: String = ""
     @Published var selectedTimes: Set<String> = []
@@ -55,6 +57,8 @@ final class TravelViewModel: ObservableObject {
             note: "Прямой рейс"
         )
     ]
+
+    @Published var stations: [Station] = []
 
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue(label: "NetworkMonitor")

@@ -12,7 +12,7 @@ private func log(_ message: String) {
     print("[TS] \(message)")
 }
 
-final class NetworkService {
+actor NetworkService {
     private let client: Client
     private let apikey: String
 
