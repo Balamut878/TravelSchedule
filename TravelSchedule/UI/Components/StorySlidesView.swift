@@ -1,0 +1,177 @@
+//
+//  StorySlidesView.swift
+//  TravelSchedule
+//
+//  Created by Александр Дудченко on 14.06.2025.
+//
+import SwiftUI
+
+struct StorySlidesView: View {
+    let markStoryViewed: (() -> Void)?
+    let slides: [String]
+    let startingIndex: Int
+    let onNextStory: (() -> Void)?
+    let onPreviousStory: (() -> Void)?
+    @State private var currentIndex: Int
+
+    init(
+        slides: [String],
+        startingIndex: Int = 0,
+        onNextStory: (() -> Void)?,
+        onPreviousStory: (() -> Void)?,
+        markStoryViewed: (() -> Void)?
+    ) {
+        self.slides = slides
+        self.startingIndex = startingIndex
+        self.onNextStory = onNextStory
+        self.onPreviousStory = onPreviousStory
+        self.markStoryViewed = markStoryViewed
+        _currentIndex = State(initialValue: startingIndex)
+    }
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var timer: Timer? = nil
+    @State private var progress: CGFloat = 0
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            Color("Black Universal")
+                .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                TabView(selection: $currentIndex) {
+                    ForEach(Array(slides.enumerated()), id: \.offset) { index, slide in
+                        ZStack {
+                            Image(slide)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(height: 710)
+                                .frame(maxWidth: .infinity)
+                                .clipShape(RoundedRectangle(cornerRadius: 40, style: .continuous))
+
+                            VStack {
+                                Spacer()
+                                titleBlock
+                                    .padding(.horizontal, 16)
+                                    .padding(.bottom, 40)
+                                    .background(
+                                        LinearGradient(
+                                            gradient: Gradient(colors: [
+                                                Color("Black Universal").opacity(0.0),
+                                                Color("Black Universal").opacity(0.5)
+                                            ]),
+                                            startPoint: .top, endPoint: .bottom
+                                        )
+                                    )
+                            }
+                        }
+                        .tag(index)
+                    }
+                }
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                .frame(height: 710)
+                .padding(.top, 31)
+                .onAppear {
+                    markStoryViewed?()
+                    startAutoPlay()
+                }
+                .onDisappear { stopAutoPlay() }
+                .onChange(of: currentIndex) { _ in
+                    progress = 0
+                }
+            }
+
+            HStack(spacing: 8) {
+                ForEach(0..<slides.count, id: \.self) { index in
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(Color.gray.opacity(0.3))
+                        GeometryReader { geometry in
+                            Capsule()
+                                .fill(Color.blue)
+                                .frame(width: currentIndex == index
+                                       ? geometry.size.width * progress
+                                       : index < currentIndex
+                                         ? geometry.size.width
+                                         : 0)
+                        }
+                    }
+                    .frame(height: 4)
+                    .frame(maxWidth: .infinity)
+                }
+            }
+            .frame(height: 4)
+            .padding(.horizontal, 16)
+            .padding(.top, 53)
+
+            Button(action: {
+                dismiss()
+            }) {
+                Image("CloseButton")
+                    .resizable()
+                    .frame(width: 30, height: 30)
+            }
+            .padding(.top, 81)
+            .padding(.trailing, 16)
+        }
+        .highPriorityGesture(
+            DragGesture()
+                .onEnded { value in
+                    if value.translation.width < -50 {
+                        if currentIndex < slides.count - 1 {
+                            currentIndex += 1
+                        } else {
+                            onNextStory?()
+                        }
+                    } else if value.translation.width > 50 {
+                        if currentIndex > 0 {
+                            currentIndex -= 1
+                        } else {
+                            onPreviousStory?()
+                        }
+                    }
+                }
+        )
+    }
+
+    private func startAutoPlay() {
+        currentIndex = startingIndex
+        progress = 0
+        timer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
+            guard progress < 1.0 else {
+                if currentIndex == slides.count - 1 {
+                    stopAutoPlay()
+                    onNextStory?() ?? dismiss()
+                } else {
+                    progress = 0
+                    currentIndex += 1
+                }
+                return
+            }
+            progress += 0.005
+        }
+    }
+
+    private func stopAutoPlay() {
+        timer?.invalidate()
+        timer = nil
+    }
+}
+
+private extension StorySlidesView {
+    var titleBlock: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Здесь должен быть какой то текст!")
+                .font(.system(size: 34, weight: .bold))
+                .foregroundColor(Color("White Universal"))
+                .lineLimit(2)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text("Здесь должен быть какой то текст!")
+                .font(.system(size: 20, weight: .regular))
+                .foregroundColor(Color("White Universal"))
+                .lineLimit(3)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}

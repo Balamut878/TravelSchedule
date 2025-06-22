@@ -13,6 +13,9 @@ struct ContentView: View {
     
     var body: some View {
         VStack(spacing: 24) {
+            StoriesScrollView(stories: Story.mockData)
+                .padding(.top, 44)
+
             StationInputView(
                 from: $travelViewModel.fromStation,
                 to: $travelViewModel.toStation,
@@ -24,7 +27,6 @@ struct ContentView: View {
             Spacer()
         }
         .padding(.horizontal, 16)
-        .padding(.top, 252)
         .padding(.bottom, 32)
         .fullScreenCover(isPresented: $isSelectingFrom) {
             CityAndStationSelectionView { result in
